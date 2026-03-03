@@ -21,4 +21,59 @@ This project emulates popular APIs like *SerpAPI* or *Tavily* without needing of
 *   **Yahoo** (Powered by Bing)
 *   **Brave Search** (Independent index)
 
+## 📁 Project Structure
+
+```
+src/
+├── main.rs              # Axum server, /search endpoint, concurrent engine dispatch
+├── models.rs            # SearchResultItem, SearchResponse structs
+└── engines/
+    ├── mod.rs            # SearchEngine enum + trait dispatch
+    ├── duckduckgo.rs     # DuckDuckGo scraper
+    ├── yahoo.rs          # Yahoo scraper (Bing-powered)
+    └── brave.rs          # Brave Search scraper
+examples/
+├── fetch_html.rs        # Download raw HTML for offline debugging
+└── test_parser.rs       # Offline CSS selector iteration
+.gemini/                 # Gemini CLI agent config
+├── GEMINI.md            # Project-level system prompt
+├── settings.json        # MCP server configuration
+└── skills/              # Project-level agent skills
+    ├── sosearch-engine-dev/  # Scraper development workflow
+    └── sosearch-api-ops/     # API operations & deployment
+.agents/                 # Generic agent config (compatible with multiple AI tools)
+└── skills/              # Same skills, alternative discovery path
+    ├── sosearch-engine-dev/
+    └── sosearch-api-ops/
+```
+
+## 🤖 Agent Skills & MCP Support
+
+This project includes built-in AI agent support for both **Gemini CLI** and other tools that follow the `.agents/` convention.
+
+### Available Skills
+
+| Skill | Description |
+|---|---|
+| `sosearch-engine-dev` | Full workflow for adding/debugging search engine scrapers: fetch HTML → test selectors offline → decode URLs → integrate |
+| `sosearch-api-ops` | Operations guide: build, run, test, deploy (local + Docker), troubleshoot |
+
+### MCP Servers
+
+Configured in `.gemini/settings.json`:
+
+| Server | Package | Purpose |
+|---|---|---|
+| `filesystem` | `@modelcontextprotocol/server-filesystem` | Scoped file access to project directory |
+
+### Usage with Gemini CLI
+
+```bash
+cd /path/to/SoSearch
+gemini
+# Skills are auto-discovered. Ask: "How do I add a new search engine?"
+```
+
+## 🚀 Quick Start
+
 Refer to `QUICK_START.md` for running instructions.
