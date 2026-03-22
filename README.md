@@ -1,6 +1,6 @@
 # SoSearch API
 
-A lightning-fast pseudo Web Search Engine API written in **Rust** (RIIR - Rewrite It In Rust style).
+A lightning-fast pseudo Web Search Engine API written in **Rust** — also works as an **MCP server** for AI agents.
 This project emulates popular APIs like *SerpAPI* or *Tavily* without needing official and expensive API keys, by multiplexing requests to popular engines directly and scraping the results concurrently.
 
 ## Philosophy
@@ -25,26 +25,15 @@ This project emulates popular APIs like *SerpAPI* or *Tavily* without needing of
 
 ```
 src/
-├── main.rs              # Axum server, /search endpoint, concurrent engine dispatch
+├── main.rs              # Entry point: HTTP server or MCP mode (--mcp)
+├── search.rs            # Shared concurrent search logic
+├── mcp.rs               # MCP stdio server (JSON-RPC 2.0)
 ├── models.rs            # SearchResultItem, SearchResponse structs
 └── engines/
     ├── mod.rs            # SearchEngine enum + trait dispatch
     ├── duckduckgo.rs     # DuckDuckGo scraper
     ├── yahoo.rs          # Yahoo scraper (Bing-powered)
     └── brave.rs          # Brave Search scraper
-examples/
-├── fetch_html.rs        # Download raw HTML for offline debugging
-└── test_parser.rs       # Offline CSS selector iteration
-.gemini/                 # Gemini CLI agent config
-├── GEMINI.md            # Project-level system prompt
-├── settings.json        # MCP server configuration
-└── skills/              # Project-level agent skills
-    ├── sosearch-engine-dev/  # Scraper development workflow
-    └── sosearch-api-ops/     # API operations & deployment
-.agents/                 # Generic agent config (compatible with multiple AI tools)
-└── skills/              # Same skills, alternative discovery path
-    ├── sosearch-engine-dev/
-    └── sosearch-api-ops/
 ```
 
 ## 🤖 Agent Skills & MCP Support
@@ -73,6 +62,42 @@ cd /path/to/SoSearch
 gemini
 # Skills are auto-discovered. Ask: "How do I add a new search engine?"
 ```
+
+## 🔌 MCP Server Mode
+
+Run SoSearch as an MCP server for AI agents (Claude, Gemini, Cursor, etc.):
+
+```bash
+./SoSearch --mcp
+```
+
+### Configuration
+
+**Claude Desktop** (`claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "sosearch": {
+      "command": "/path/to/SoSearch",
+      "args": ["--mcp"]
+    }
+  }
+}
+```
+
+**Gemini CLI** (`.gemini/settings.json`):
+```json
+{
+  "mcpServers": {
+    "sosearch": {
+      "command": "/path/to/SoSearch",
+      "args": ["--mcp"]
+    }
+  }
+}
+```
+
+This exposes a `web_search` tool that AI agents can call to search the web.
 
 ## 🚀 Quick Start
 

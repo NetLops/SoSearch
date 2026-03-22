@@ -155,3 +155,53 @@ This triggers the workflow at `.github/workflows/release.yml`, which:
 
 Tags containing `alpha` or `beta` (e.g., `v0.2.0-beta`) are automatically marked as pre-release.
 
+## 8. MCP Server Mode
+
+SoSearch can run as an **MCP (Model Context Protocol) server**, allowing AI agents to use it as a search tool directly.
+
+```bash
+./SoSearch --mcp
+```
+
+### Configure in Your AI Tool
+
+**Claude Desktop** — add to `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "sosearch": {
+      "command": "/path/to/SoSearch",
+      "args": ["--mcp"]
+    }
+  }
+}
+```
+
+**Gemini CLI / Cursor / Windsurf** — add to `.gemini/settings.json` or equivalent:
+```json
+{
+  "mcpServers": {
+    "sosearch": {
+      "command": "/path/to/SoSearch",
+      "args": ["--mcp"]
+    }
+  }
+}
+```
+
+### Test MCP Handshake
+
+```bash
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | ./SoSearch --mcp
+```
+
+Expected response:
+```json
+{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2024-11-05","capabilities":{"tools":{}},"serverInfo":{"name":"sosearch","version":"0.1.0"}}}
+```
+
+### Available Tools
+
+| Tool | Description | Arguments |
+|---|---|---|
+| `web_search` | Concurrent multi-engine web search | `query` (string) |
