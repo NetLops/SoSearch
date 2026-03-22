@@ -112,9 +112,64 @@ Run SoSearch as an MCP server for AI agents (Claude, Gemini, Cursor, etc.):
 
 This exposes a `web_search` tool that AI agents can call to search the web.
 
+### Windows Configuration
+
+**Claude Desktop** (`%APPDATA%\Claude\claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "sosearch": {
+      "command": "C:\\path\\to\\SoSearch.exe",
+      "args": ["--mcp"]
+    }
+  }
+}
+```
+
 ## 🚀 Quick Start
 
-Refer to `QUICK_START.md` for running instructions.
+### Linux / macOS
+
+```bash
+# Download pre-built binary or build from source
+cargo run --release
+curl "http://localhost:10080/search?q=hello+world"
+```
+
+### Windows
+
+**使用预编译二进制：**
+
+从 [GitHub Releases](https://github.com/netlops/SoSearch/releases) 下载 `SoSearch-windows-amd64.zip`，解压后：
+
+```powershell
+# 启动 HTTP 服务
+.\SoSearch.exe
+
+# 另开一个终端测试
+Invoke-RestMethod "http://localhost:10080/search?q=hello+world" | ConvertTo-Json
+
+# 或使用 curl
+curl.exe "http://localhost:10080/search?q=hello+world"
+```
+
+**从源码编译（需要安装 [Rust](https://rustup.rs/)、CMake、NASM、LLVM/Clang）：**
+
+```powershell
+# 安装依赖 (使用 Chocolatey)
+choco install cmake nasm llvm -y
+
+# 编译运行
+cargo run --release
+```
+
+**MCP 模式：**
+
+```powershell
+.\SoSearch.exe --mcp
+```
+
+Refer to `QUICK_START.md` for full instructions.
 
 ## 📄 License
 
