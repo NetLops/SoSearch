@@ -29,19 +29,17 @@ jobs:
           - name: linux-amd64
             target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            use_cross: false
           - name: linux-arm64
             target: aarch64-unknown-linux-gnu
-            os: ubuntu-latest
-            use_cross: true
+            os: ubuntu-24.04-arm    # Native ARM64 runner
 
           # ── macOS ──
           - name: macos-amd64
             target: x86_64-apple-darwin
-            os: macos-latest        # Cross-compile from ARM64 runner
+            os: macos-latest        # Cross-compile from ARM64
           - name: macos-arm64
             target: aarch64-apple-darwin
-            os: macos-latest        # Apple Silicon runner (native)
+            os: macos-latest        # Apple Silicon (native)
 
           # ── Windows ──
           - name: windows-amd64
@@ -61,8 +59,8 @@ jobs:
 
       # ── Platform-specific dependencies ──
       - name: Install deps (Linux)
-        if: runner.os == 'Linux' && !matrix.use_cross
-        run: sudo apt-get update && sudo apt-get install -y cmake clang
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y cmake clang perl
 
       - name: Install NASM (Windows)
         if: runner.os == 'Windows'
@@ -73,18 +71,8 @@ jobs:
         shell: bash
         run: echo "C:\\Program Files\\NASM" >> $GITHUB_PATH
 
-      # ── Build with cross (Linux ARM64) ──
-      - name: Install cross
-        if: matrix.use_cross
-        run: cargo install cross --git https://github.com/cross-rs/cross
-
-      - name: Build (cross)
-        if: matrix.use_cross
-        run: cross build --release --target ${{ matrix.target }}
-
-      # ── Build natively ──
-      - name: Build (native)
-        if: "!matrix.use_cross"
+      # ── Build ──
+      - name: Build
         run: cargo build --release --target ${{ matrix.target }}
 
       # ── Package ──
