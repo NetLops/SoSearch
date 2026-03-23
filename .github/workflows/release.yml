@@ -38,10 +38,10 @@ jobs:
           # ── macOS ──
           - name: macos-amd64
             target: x86_64-apple-darwin
-            os: macos-13          # Intel runner
+            os: macos-latest        # Cross-compile from ARM64 runner
           - name: macos-arm64
             target: aarch64-apple-darwin
-            os: macos-latest      # Apple Silicon runner
+            os: macos-latest        # Apple Silicon runner (native)
 
           # ── Windows ──
           - name: windows-amd64

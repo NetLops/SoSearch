@@ -1,8 +1,8 @@
 # Cross-compilation configuration for `cross` tool
 # Used by CI for Linux ARM64 builds
-# boring-sys2 (BoringSSL) requires cmake to compile
+# boring-sys2 (BoringSSL) requires cmake, clang, and perl to compile
 
 [target.aarch64-unknown-linux-gnu]
 pre-build = [
-    "apt-get update && apt-get install -y cmake clang"
+    "apt-get update && apt-get install -y cmake clang perl"
 ]
