@@ -1,0 +1,5 @@
+.git
+target
+.cargo
+*.log
+*_out.html

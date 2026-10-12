@@ -1,5 +1,5 @@
 # Build stage
-FROM rust:bookworm as builder
+FROM rust:bookworm AS builder
 
 WORKDIR /usr/src/app
 
@@ -13,8 +13,6 @@ RUN apt-get update && apt-get install -y cmake clang
 RUN mkdir -p .cargo && \
     echo '[source.crates-io]\n\
 replace-with = "rsproxy-sparse"\n\
-[source.rsproxy]\n\
-registry = "sparse+https://rsproxy.cn/index/"\n\
 [source.rsproxy-sparse]\n\
 registry = "sparse+https://rsproxy.cn/index/"\n\
 [registries.rsproxy]\n\
@@ -25,7 +23,7 @@ git-fetch-with-cli = true' > .cargo/config.toml
 COPY . .
 
 # Build the application
-RUN cargo build --release
+RUN cargo build --release --locked
 
 # Runtime stage
 FROM debian:bookworm-slim
