@@ -1,5 +1,6 @@
 .git
 target
+artifacts
 .cargo
 *.log
 *_out.html

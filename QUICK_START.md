@@ -122,6 +122,50 @@ make clean              # cargo clean
 
 ## 7. CI/CD Auto Release
 
+### PR availability checks
+
+The `Docker build and smoke test` workflow builds and starts the Docker image on
+relevant pull requests. It checks HTTP 400/404/405 handling, MCP initialization,
+tool discovery, ping, invalid arguments, notification behavior, and recovery after
+malformed JSON. It also calls `/search` and the MCP `web_search` tool with search
+upstreams deliberately unavailable, checking empty-result handling and query
+encoding. This mode uses `tests/docker-compose.ci.yml` only in CI; normal startup
+continues to use `docker-compose.yml`.
+
+For actual search availability, run the same workflow manually with **live_search**
+enabled (the default in the Actions form), or use:
+
+```bash
+gh workflow run docker.yml --ref main -f live_search=true -f search_query='rust programming language'
+```
+
+Use the PR branch with `--ref` to check an unmerged change. Live checks require
+nonempty results from both HTTP and MCP, validate the result fields and absolute
+HTTP(S) URLs, and fail on empty results or timeouts. At least one search engine
+must return results for each interface; success does not establish that every
+engine is available. External rate limits, bot challenges, and network failures
+can fail this check, so it is separate from the default PR checks.
+
+Each run uploads an `availability-<run-id>` artifact with JSON check results and
+container logs, and adds a check summary to the Actions run. Live reports include
+result counts, engine counts, and sample result URLs. These workflows validate
+availability; they do not deploy the service. Release publication remains the
+separate tag-triggered workflow described below.
+
+To reproduce the default checks locally with Docker:
+
+```bash
+export COMPOSE_FILE=docker-compose.yml:tests/docker-compose.ci.yml
+make docker-compose-up
+python3 scripts/smoke-docker.py --offline-search --report artifacts/offline.json
+docker compose down --remove-orphans
+unset COMPOSE_FILE
+```
+
+For a running service on port 11380, use
+`python3 scripts/smoke-docker.py --live-search --report artifacts/live.json` to
+require real search results. Set `PORT` if your service uses a different port.
+
 This project uses GitHub Actions to automatically build multi-platform binaries and publish GitHub Releases.
 
 ### How to Publish a Release

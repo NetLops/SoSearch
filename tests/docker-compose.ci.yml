@@ -1,0 +1,13 @@
+# Reject outbound search requests immediately, without relying on public engines.
+# Use only in CI: COMPOSE_FILE=docker-compose.yml:tests/docker-compose.ci.yml
+services:
+  sosearch:
+    environment:
+      HTTP_PROXY: http://127.0.0.1:9
+      HTTPS_PROXY: http://127.0.0.1:9
+      ALL_PROXY: http://127.0.0.1:9
+      NO_PROXY: ''
+      http_proxy: http://127.0.0.1:9
+      https_proxy: http://127.0.0.1:9
+      all_proxy: http://127.0.0.1:9
+      no_proxy: ''
